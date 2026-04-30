@@ -188,4 +188,36 @@
             });   
             }
 
-        
+            function checkMatch() {
+                const [tile1, tileZ] = flippedTiles;
+                if(tile1.dataset.symbol === tile2.dataset.symbol) {
+                    setTimeouy(() => {
+                        tile1.classList.add('matched');
+                        tile2.classList.add('matched');
+                        flippedTiles = [];
+                        matchedCount += 2;
+                        if (matchedCount === 14 ) alert("You Win !") ;
+                        }, 500);
+
+                    } else {
+                        setTimeout(() => {
+                            tile1.classList.remove('flipped');
+                            tile2.classList.remove('flipped');
+                            tile1.innerText ="?";
+                            tile2.innerText = "?";
+                            flippedTiles = [];
+                        }, 800);
+                    }
+                        }
+
+                        function resetGame() {
+                            playClick();
+                            flippedTiles = [];
+                            createBoard ();
+
+                        }
+
+                        createBoard();
+                    </script>
+                </body>
+            </html>        
