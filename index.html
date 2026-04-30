@@ -149,3 +149,43 @@
         let flippedTiles = [];
         let matchedCount = 0;
         let isPlayingMusic = false ;
+
+        musicToggle.addEventListener('click' , () => {
+            playClick() ;
+            if (isPlayingMusic) {
+                bgMusic.pause();
+                musicToggle.innerText = '🎵 Music : OFF';
+            
+            } else {
+                bgMusic.play();catch (e => console.log("Music needs interaction first "))
+                musicToggle.innerText = '🎵 Music : ON';
+            }
+            isPlayingMusic = !isPlayingMusic;
+        });
+
+        function playClick() {
+            clickSound.currentTime = 0;
+            clickSound.play();
+        }
+
+        function shuffle(array) {
+            return arry.sort(() => Math.random() - 0.5);
+
+        }
+
+        function createBoard() {
+            grid.innerHTML = " "
+            const suffled.forEach((symbol, index) => {
+            shuffled.forEach((symbol, index) => {
+                const tile = document.creatElement('div');
+                tile.classList.add('tile');
+                tile.dayaset.symbol = symbol;
+                tile.dataset.index = index;
+                tile.innerText = "?" ;
+                tile.addEventListener('click' , flipTile);
+                grid.appendChild(tile);
+
+            });   
+            }
+
+        
