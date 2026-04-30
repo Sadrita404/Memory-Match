@@ -31,8 +31,10 @@
         }
 
         .content {
-            background-color: #e0e0e0;
-            border: 4px solid #000;
+            background-color: #dfdfdf;
+            border: 4px solid #fff;
+            border-right: 4px solid #555;
+            border-bottom: 4px solid #555;
             box-shadow: 10px 10px 0px rgba(0,0,0,0.2);
             padding: 30px;
             margin-top: 140px;
@@ -46,34 +48,34 @@
         h1 { 
             margin-top: 0; 
             color: #000; 
-            font-size: 3rem;
+            font-size: 2.8rem;
             text-transform: uppercase;
-            letter-spacing: 4px;
-            text-shadow: 3px 3px 0px #fff;
+            background: #000080;
+            color: white;
+            padding: 5px;
+            letter-spacing: 2px;
         }
 
         .controls { margin-bottom: 30px; display: flex; gap: 15px; justify-content: center; }
-
+        
         .btn-ui {
-            padding: 12px 24px;
+            padding: 10px 20px;
             cursor: pointer;
-            background: #bdbdbd;
-            border-top: 4px solid #fff;
-            border-left: 4px solid #fff;
-            border-right: 4px solid #424242;
-            border-bottom: 4px solid #424242;
+            background: #c0c0c0;
+            border: 2px solid #fff;
+            border-right: 2px solid #000;
+            border-bottom: 2px solid #000;
             font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
             font-size: 1.1rem;
-            font-family: inherit;
             transition: none;
         }
 
-        .btn-ui:active {
-            border-top: 4px solid #424242;
-            border-left: 4px solid #424242;
-            border-right: 4px solid #fff;
-            border-bottom: 4px solid #fff;
-            transform: translate(2px, 2px);
+        .btn-ui:active { 
+            border: 2px solid #000;
+            border-right: 2px solid #fff;
+            border-bottom: 2px solid #fff;
+            padding: 11px 19px 9px 21px;
         }
 
         .game-grid {
@@ -86,26 +88,24 @@
 
         .tile {
             aspect-ratio: 1/1;
-            background: #bdbdbd;
-            border-top: 6px solid #fff;
-            border-left: 6px solid #fff;
-            border-right: 6px solid #424242;
-            border-bottom: 6px solid #424242;
+            background: #c0c0c0;
+            border: 4px solid #fff;
+            border-right: 4px solid #000;
+            border-bottom: 4px solid #000;
             cursor: pointer;
             font-size: 3.5rem; 
             display: flex;
             align-items: center;
             justify-content: center;
             user-select: none;
-            color: #000;
+            color: #333;
         }
 
         .tile.flipped {
-            background: #eeeeee;
-            border-top: 6px solid #424242;
-            border-left: 6px solid #424242;
-            border-right: 6px solid #fafafa;
-            border-bottom: 6px solid #fafafa;
+            background: #fff;
+            border: 4px solid #808080;
+            border-right: 4px solid #dfdfdf;
+            border-bottom: 4px solid #dfdfdf;
         }
 
         .tile.matched {
@@ -120,10 +120,11 @@
             color: #000;
             z-index: 1;
             font-size: 1.3rem;
-            background: #bdbdbd;
+            background: #c0c0c0;
             width: 100%;
             text-align: center;
-            border-top: 4px solid #000;
+            border-top: 4px solid #fff;
+            box-shadow: 0 -4px 0 #808080;
         }
 
         @media (max-width: 768px) {
@@ -149,11 +150,11 @@
     </a>
 
     <div class="content">
-        <h1>MEMORY MATCH</h1>
+        <h1>Memory Match</h1>
         
         <div class="controls">
-            <button class="btn-ui" id="musicToggle">MUSIC: OFF</button>
-            <button class="btn-ui" onclick="resetGame()">RESET BOARD</button>
+            <button class="btn-ui" id="musicToggle">🎵 Music: OFF [M]</button>
+            <button class="btn-ui" onclick="resetGame()">🔄 Reset</button>
         </div>
 
         <div class="game-grid" id="grid"></div>
@@ -176,16 +177,24 @@
         let matchedCount = 0;
         let isPlayingMusic = false;
 
-        musicToggle.addEventListener('click', () => {
+        function toggleMusic() {
             playClick();
             if (isPlayingMusic) {
                 bgMusic.pause();
-                musicToggle.innerText = "MUSIC: OFF";
+                musicToggle.innerText = "🎵 Music: OFF [M]";
             } else {
                 bgMusic.play().catch(e => console.log("Interaction required"));
-                musicToggle.innerText = "MUSIC: ON";
+                musicToggle.innerText = "🎵 Music: ON [M]";
             }
             isPlayingMusic = !isPlayingMusic;
+        }
+
+        musicToggle.addEventListener('click', toggleMusic);
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'm') {
+                toggleMusic();
+            }
         });
 
         function playClick() {
@@ -200,7 +209,7 @@
         function createBoard() {
             grid.innerHTML = '';
             const shuffled = shuffle(gameSet);
-            shuffled.forEach((symbol, index) => {
+            shuffled.forEach((symbol) => {
                 const tile = document.createElement('div');
                 tile.classList.add('tile');
                 tile.dataset.symbol = symbol;
@@ -232,7 +241,7 @@
                     flippedTiles = [];
                     matchedCount += 2;
                     if (matchedCount === 12) {
-                        setTimeout(() => alert("WINNER!"), 300);
+                        setTimeout(() => alert("Victory! You matched all pairs!"), 300);
                     }
                 }, 500);
             } else {
@@ -252,10 +261,8 @@
             flippedTiles = [];
             createBoard();
         }
-
+// This Website is made by Sadrita Neogi 
         createBoard();
     </script>
 </body>
 </html>
-
-// This website is made by Sadrita Neogi 
