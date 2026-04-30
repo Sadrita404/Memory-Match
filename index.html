@@ -40,8 +40,9 @@
             margin-top: 140px;
             margin-bottom: 40px;
             text-align: center;
-            max-width: 600px;
-            width: 90%;
+            /* Wider max-width to accommodate 6 tiles in a row */
+            max-width: 850px; 
+            width: 95%;
             z-index: 1;
         }
 
@@ -49,12 +50,13 @@
             margin-top: 0; 
             color: #333; 
             font-family: monospace; 
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         /* Audio Controls */
-        .controls { margin-bottom: 30px; display: flex; gap: 10px; justify-content: center; }
+        .controls { margin-bottom: 30px; display: flex; gap: 15px; justify-content: center; }
         .btn-ui {
             padding: 12px 24px;
             cursor: pointer;
@@ -62,28 +64,31 @@
             border: 3px solid #333;
             box-shadow: 4px 4px 0px #333;
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 1.1rem;
             transition: all 0.1s;
+            border-radius: 4px;
         }
         .btn-ui:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #333; }
 
-        /* Grid System - Optimized for 12 tiles (3x4 or 4x3) */
+        /* Grid System - FORCED 6 COLUMNS */
         .game-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            /* This forces 6 columns in one row */
+            grid-template-columns: repeat(6, 1fr); 
             gap: 15px;
             margin: 20px auto;
+            max-width: 800px;
         }
 
-        /* Tile Button Style - Larger and Bold */
+        /* Tile Button Style - Large, Tactile, and Thick */
         .tile {
             aspect-ratio: 1/1;
             background: #eee;
             border: 5px solid #333;
-            border-bottom: 10px solid #333;
+            border-bottom: 12px solid #333;
             border-radius: 12px;
             cursor: pointer;
-            /* Massive Emoji Size */
+            /* Massive Emoji Size for better visibility */
             font-size: 3.5rem; 
             display: flex;
             align-items: center;
@@ -93,10 +98,14 @@
             color: #333;
         }
 
+        .tile:hover {
+            background: #fdfdfd;
+        }
+
         .tile.flipped {
             background: #fff;
             border-bottom: 5px solid #333;
-            transform: translateY(5px);
+            transform: translateY(7px); /* Moves down to look "pressed" */
         }
 
         .tile.matched {
@@ -106,20 +115,29 @@
 
         footer {
             margin-top: auto;
-            padding: 20px;
+            padding: 25px;
             font-weight: bold;
             color: #333;
             z-index: 1;
-            font-size: 1.2rem;
-            background: rgba(255,255,255,0.5);
+            font-size: 1.3rem;
+            background: rgba(255,255,255,0.6);
             width: 100%;
             text-align: center;
+            border-top: 2px solid #333;
         }
 
-        /* Responsive scaling for smaller screens */
-        @media (max-width: 480px) {
+        /* Responsive: On mobile, 6 in a row is too small, so we stack them slightly differently */
+        @media (max-width: 768px) {
+            .game-grid { 
+                grid-template-columns: repeat(3, 1fr); /* 3x4 on tablets */
+            }
             .tile { font-size: 2.5rem; }
-            .game-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 480px) {
+            .game-grid { 
+                grid-template-columns: repeat(2, 1fr); /* 2x6 on phones */
+            }
             h1 { font-size: 1.8rem; }
         }
     </style>
@@ -140,7 +158,7 @@
         
         <div class="controls">
             <button class="btn-ui" id="musicToggle">🎵 Music: OFF</button>
-            <button class="btn-ui" onclick="resetGame()">🔄 Reset</button>
+            <button class="btn-ui" onclick="resetGame()">🔄 Reset Board</button>
         </div>
 
         <div class="game-grid" id="grid">
@@ -158,38 +176,38 @@
         const clickSound = document.getElementById('clickSound');
         const musicToggle = document.getElementById('musicToggle');
 
-        // 6 symbols for 12 tiles total
+        // 6 unique symbols to create 12 total tiles (6 per row)
         let symbols = ['⭐', '🍎', '⚽', '🍕', '🎮', '🚀'];
         let gameSet = [...symbols, ...symbols]; 
         let flippedTiles = [];
         let matchedCount = 0;
         let isPlayingMusic = false;
 
-        // Music Toggle Logic
+        // Sound: Background Music Toggle
         musicToggle.addEventListener('click', () => {
             playClick();
             if (isPlayingMusic) {
                 bgMusic.pause();
                 musicToggle.innerText = "🎵 Music: OFF";
             } else {
-                bgMusic.play().catch(e => console.log("Audio play blocked until interaction"));
+                bgMusic.play().catch(e => console.log("Audio interaction required."));
                 musicToggle.innerText = "🎵 Music: ON";
             }
             isPlayingMusic = !isPlayingMusic;
         });
 
-        // Click Sound Trigger
+        // Sound: UI Click Effect
         function playClick() {
             clickSound.currentTime = 0;
             clickSound.play();
         }
 
-        // Shuffle Algorithm
+        // Randomize tile positions
         function shuffle(array) {
             return array.sort(() => Math.random() - 0.5);
         }
 
-        // Create the 12-tile board
+        // Initialize/Rebuild the Board
         function createBoard() {
             grid.innerHTML = '';
             const shuffled = shuffle(gameSet);
@@ -197,16 +215,14 @@
                 const tile = document.createElement('div');
                 tile.classList.add('tile');
                 tile.dataset.symbol = symbol;
-                tile.dataset.index = index;
-                // Using a dot or question mark for the back
-                tile.innerText = "?"; 
+                tile.innerText = "?"; // Face-down text
                 tile.addEventListener('click', flipTile);
                 grid.appendChild(tile);
             });
         }
 
         function flipTile() {
-            // Prevent clicking more than 2 or clicking already flipped tiles
+            // Lock flipping if 2 are already showing or if clicking the same tile
             if (flippedTiles.length < 2 && !this.classList.contains('flipped')) {
                 playClick();
                 this.classList.add('flipped');
@@ -222,18 +238,18 @@
         function checkMatch() {
             const [tile1, tile2] = flippedTiles;
             if (tile1.dataset.symbol === tile2.dataset.symbol) {
-                // Match Found
+                // SUCCESS: Match
                 setTimeout(() => {
                     tile1.classList.add('matched');
                     tile2.classList.add('matched');
                     flippedTiles = [];
                     matchedCount += 2;
                     if (matchedCount === 12) {
-                        setTimeout(() => alert("Victory! You found all pairs!"), 200);
+                        setTimeout(() => alert("Victory! You matched all pairs!"), 300);
                     }
                 }, 500);
             } else {
-                // No Match
+                // FAIL: Hide tiles again after a brief delay
                 setTimeout(() => {
                     tile1.classList.remove('flipped');
                     tile2.classList.remove('flipped');
@@ -251,7 +267,7 @@
             createBoard();
         }
 
-        // Initialize Board on Load
+        // Run the game on load
         createBoard();
     </script>
 </body>
