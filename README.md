@@ -1,5 +1,7 @@
-# Memory Match
 
+<img width="1135" height="154" alt="Screenshot 2026-05-07 at 12 54 05 AM" src="https://github.com/user-attachments/assets/833403f7-2e50-4415-9d4b-5d7451f92028" />
+
+---
 
 |Title | Memory Match|
 | :-- | :-- |
@@ -11,6 +13,14 @@
 ---
 
 #### Memory match is a classic brain-training game where cards are laid face-down in a grid. Players take turns flipping over two cards at a time, aiming to find identical pairs.
+
+---
+
+## Inspo:
+My inspo was some of the popular games that are avilable in the **Poki Games** Platform and I love to play Such Memory Match Games there , but I want to built one for myself..
+
+## Why I built it:
+Most of the web games are good but there are too much Ads , sign in , log in - required just to play an simple game So I make one where there will be no Ads , sign in , log in - required to play the game . And I can also show this project to someone else that I have made this Project...
 
 ---
 
